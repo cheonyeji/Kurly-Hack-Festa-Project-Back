@@ -1,8 +1,8 @@
 import express from "express";
 import morgan from "morgan";
-import deliveryRouter from "./routers/delivery/deliveryRouter.js";
-import globalRouter from "./routers/globalRouter.js";
-import userRouter from "./routers/user/userRouter.js";
+import deliveryRouter from "./routers/delivery/deliveryRouter";
+import globalRouter from "./routers/globalRouter";
+import userRouter from "./routers/user/userRouter";
 
 const app = express();
 

@@ -1,6 +1,6 @@
 import express from "express";
-import csRouter from "./csRouter.js";
-import msgRouter from "./msgRouter.js";
+import csRouter from "./csRouter";
+import msgRouter from "./msgRouter";
 
 const deliveryRouter = express.Router();
 

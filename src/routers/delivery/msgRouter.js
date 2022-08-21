@@ -4,7 +4,7 @@ import {
   getDeliveryToDos,
   getDeliveryToDoItem,
   updateDeliveryToDoItem,
-} from "../../controllers/msgController.js";
+} from "../../controllers/msgController";
 
 const msgRouter = express.Router();
 

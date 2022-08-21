@@ -4,7 +4,7 @@ import {
   getCSTodoItem,
   getCSToDos,
   updateCSTodoItem,
-} from "../../controllers/csController.js";
+} from "../../controllers/csController";
 
 const csRouter = express.Router();
 
