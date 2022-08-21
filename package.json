@@ -4,8 +4,9 @@
   "description": "kurlyvery server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec babel-node src/init.js"
+    "start": "node build/init.js",
+    "build:server": "babel src -d build",
+    "dev:server": "nodemon --exec babel-node src/init.js"
   },
   "repository": {
     "type": "git",
@@ -25,10 +26,10 @@
     "mysql2": "^2.3.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.18.10",
     "@babel/core": "^7.18.10",
     "@babel/node": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
     "nodemon": "^2.0.19"
-  },
-  "type": "module"
+  }
 }
