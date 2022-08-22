@@ -31,7 +31,7 @@
     "user_id": "cheonyeji"
     }, { ... }, { ... } ]
 
-- GET /user/order/:ordernum -> 특정 주문 상세 --> res.send(주문번호 기준으로 (상온/냉장/냉동 값, 배송완료날짜, 운송장 object 배열 )
+- GET /user/order/:ordernum -> 특정 주문 상세 --> res.send(주문번호 기준으로 (상온/냉장/냉동 값, 배송완료날짜, 운송장, 상태 object 배열 )
 
   - 예시
     [{
