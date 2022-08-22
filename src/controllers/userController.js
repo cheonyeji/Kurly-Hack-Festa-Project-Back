@@ -1,14 +1,61 @@
+import { getConnectionPool } from "../dababase/db";
+import {
+  getOrderItemsQuery,
+  getOrdernumItemQuery,
+  setCSOrdernumItemQuery,
+} from "../dababase/query";
+
 export const getOrderItems = (req, res) => {
-  return res.json({
-    orderNum: 1232134,
-    name: "천예지",
+  getConnectionPool(async (connection) => {
+    try {
+      let [rows] = await connection.query(getOrderItemsQuery);
+      connection.release();
+      return res.send(rows);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
   });
 };
 
 export const getOrdernumItem = (req, res) => {
-  return res.json(`${req.params.ordernum}을 조회합니다`);
+  getConnectionPool(async (connection) => {
+    try {
+      let [rows] = await connection.query(
+        getOrdernumItemQuery,
+        req.params.ordernum
+      );
+      connection.release();
+      return res.send(rows);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
 };
 
 export const setCSOrdernumItem = (req, res) => {
-  return res.send(`${req.params.ordernum} 내역에 CS를 접수합니다.`);
+  const { img_uri, title, content, category } = req.body;
+  const queryParams = [
+    req.params.ordernum,
+    img_uri,
+    title,
+    content,
+    category,
+    0,
+  ];
+
+  getConnectionPool(async (connection) => {
+    try {
+      await connection.query(setCSOrdernumItemQuery, queryParams);
+      connection.release();
+      return res.status(200);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
 };
