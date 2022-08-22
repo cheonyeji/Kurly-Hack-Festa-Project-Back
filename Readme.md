@@ -6,7 +6,17 @@
 
 ## User (Kurly)
 
-### (:id부분은 모두 시나리오상 생략)
+(:id부분은 모두 시나리오상 생략)
+
+## enum
+
+[ status ]
+0 주문접수 (미배송)
+1 배송중
+2 배송지연
+3 배송완료
+
+### 주문 내역 관련
 
 - GET /user/order -> 주문 리스트 --> res.send (주문일자, 주문번호, 주문상품, 결제방법, 결제금액, 주문상태, 주문유저id object 배열 )
 
@@ -27,7 +37,8 @@
     [{
     "temperature": "refrigerating",
     "tracking_num": "220-W0-227233424-03",
-    "delivered_date": "2022-08-21T19:20:00.000Z"
+    "delivered_date": "2022-08-21T19:20:00.000Z",
+    "tracking_status": 1
     }, {...} ]
 
   (미배송인 경우 배송완료 날짜 값 null)
@@ -35,6 +46,9 @@
 
 - POST /user/order/:ordernum -> 특정 주문 cs 접수
   (body에 json형식으로 img_uri, title, content, category 넘겨주세요)
+
+### 채팅 관련
+
 - GET /user/order/:ordernum/0 -> 해당주문번호 상온 운송장 채팅이력
 - GET /user/order/:ordernum/1 -> 해당주문번호 냉장 운송장 채팅이력
 - GET /user/order/:ordernum/2 -> 해당주문번호 냉동 운송장 채팅이력
