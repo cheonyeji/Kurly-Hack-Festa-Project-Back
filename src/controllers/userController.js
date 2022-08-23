@@ -1,4 +1,4 @@
-import { getConnectionPool } from "../dababase/db";
+import { getConnectionPool, pool } from "../dababase/db";
 import {
   getOrderItemsQuery,
   getOrdernumItemQuery,
@@ -51,7 +51,7 @@ export const setCSOrdernumItem = (req, res) => {
     try {
       await connection.query(setCSOrdernumItemQuery, queryParams);
       connection.release();
-      return res.status(200);
+      return res.send("DB insert success");
     } catch (err) {
       console.log("Query Error", err);
       connection.release();
@@ -59,3 +59,32 @@ export const setCSOrdernumItem = (req, res) => {
     }
   });
 };
+
+// export const setCSOrdernumItem = async (req, res) => {
+//   const { img_uri, title, content, category } = req.body;
+//   const queryParams = [
+//     req.params.ordernum,
+//     img_uri,
+//     title,
+//     content,
+//     category,
+//     0,
+//   ];
+
+//   try {
+//     const connection = await pool.getConnection(async (conn) => conn);
+//     try {
+//       await connection.query(setCSOrdernumItemQuery, queryParams);
+//       connection.release();
+//       console.log("Success");
+//       return res.send("DB insert success");
+//     } catch (err) {
+//       console.log("Query Error", err);
+//       connection.release();
+//       return res.send(err);
+//     }
+//   } catch (err) {
+//     console.log("DB error");
+//     return res.send(err);
+//   }
+// };

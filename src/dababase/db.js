@@ -9,7 +9,7 @@ export const pool = mysql.createPool({
   password: process.env.AWS_DB_PASSWORD,
   port: process.env.AWS_DB_PORT,
   database: "kurylyDB",
-  connectionLimit: 30,
+  connectionLimit: 40,
   enableKeepAlive: true,
 });
 
@@ -30,10 +30,21 @@ export async function getConnectionPool(callback) {
 //   try {
 //     const connection = await pool.getConnection(async (conn) => conn);
 //     try {
-//       let [rows] = await connection.query("SELECT * FROM `order`");
+//       const queryParams = [
+//         "1234",
+//         "",
+//         "테스트제목",
+//         "테스트내용",
+//         "테스트카테고리",
+//         0,
+//       ];
+//       await connection.query(
+//         "INSERT INTO `cs` (`order_num`,`img_uri`,`request_title`,`request_content`,`request_category`,`completed`) VALUES(?,?,?,?,?,?)",
+//         queryParams
+//       );
 //       connection.release();
-//       console.log(rows);
-//       return rows;
+//       console.log("Success");
+//       return true;
 //     } catch (err) {
 //       console.log("Query Error", err);
 //       connection.release();
@@ -45,7 +56,7 @@ export async function getConnectionPool(callback) {
 //   }
 // };
 
-// getOrderItemQuery();
+//getOrderItemQuery();
 
 // connection.connect(function (err) {
 //   if (err) {
