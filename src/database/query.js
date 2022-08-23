@@ -18,6 +18,7 @@ export const getChattingHistoryByTempQuery =
   "select `text`, `img_uri` from `message` where `tracking_num` = (select `tracking_num` from `delivery` where `order_num`=? and `temperature` = ?) order by `time` desc limit 1";
 
 //////// msgController
+// GET /delivery/msg/todo -> 미배송 리스트
 export const getDeliveryToDosQuery =
   "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` where `delivered_date` is null";
 // 주문일자 기준 정렬한 결과 (오래된 일자 먼저)
@@ -25,17 +26,21 @@ export const getDeliveryToDosQuery =
 // 주문일자 기준 정렬하기 전 (따로 정렬X)
 // "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` join `order` on `delivery`.`order_num` = `order`.`order_num` where `delivered_date` is null order by  `order`.`order_date` asc";
 
+// GET /delivery/msg/done -> 배송완료 리스트 (배송날짜 기준 최신순)
 export const getDeliveryDonesQuery =
   "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`phone_num`, `delivered_date`, `order_num` FROM `delivery` where `delivered_date` is not null order by `delivered_date` desc";
 // 주문번호 기준 정렬한 결과 (오래된 일자 먼저)
 // "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`phone_num`, `delivered_date`, `delivery`.`order_num`, `order`.`order_date`FROM `delivery` where `delivered_date` is not null";
 
+// 운송장기준 최초 채팅인 경우에만 insert
 const insertIfNotExits =
   "INSERT IGNORE INTO `header` (`tracking_num`, `from_id`, `to_id`) select `tracking_num`, `kurlyvery_id`, `user_id` from `kurylyDB`.`delivery` where `tracking_num` = ? ; ";
 
+// 채팅 이력 저장
 const saveChatting =
   "INSERT INTO `message` (`text`,`tracking_num`,`img_uri`,`is_first_msg`) VALUES (?,?,?,?); ";
 
+// 운송장 기준 배송상태 -> 2 (배송지연) 업데이트
 const updateToStatusTwo =
   "UPDATE `delivery` SET `tracking_status` = 2 WHERE `tracking_num` = ?; ";
 
@@ -43,15 +48,19 @@ const updateToStatusTwo =
 const updateToStatusThree =
   "UPDATE `delivery` SET `delivered_date` = (select `time` from `message` where `tracking_num` = ? order by `time` desc limit 1), `tracking_status` = 3 WHERE `tracking_num` = ?; ";
 
-// order table의 order_status 업데이트 쿼리
+// order table의 order_status -> 2 (배송지연) 업데이트
 const updateOrderStatusToTwo =
   "update `kurylyDB`.`order` set `order_status`=2 where `order_num` = ?;";
 
+// order table의 order_status -> 3 (배송완료) 업데이트
 const updateOrderStatusToThree =
   "update `order` set `order_status`= IF((select count(`tracking_status`) from `delivery` where (`order_num` = ? and `tracking_status` != 3)) = 0, 3, `order_status`)  where `order_num` = ?";
 
+// POST /delivery/msg/todo/2/:trackingnum -> 송장번호 메시지 전송 (미배송->배송지연)
 export const updateDeliveryToDoItemToStatusTwoQuery =
   insertIfNotExits + saveChatting + updateToStatusTwo + updateOrderStatusToTwo;
+
+// POST /delivery/msg/todo/3/:trackingnum -> 송장번호 메시지 전송 (미배송->배송완료)
 export const updateDeliveryToDoItemToStatusThreeQuery =
   insertIfNotExits +
   saveChatting +
@@ -59,11 +68,18 @@ export const updateDeliveryToDoItemToStatusThreeQuery =
   updateOrderStatusToThree;
 
 //////// csController
+
+// GET /delivery/cs/todo -> 오배송 리스트 (cs접수날짜 기준 최신순 정렬)
 export const getCSToDosQuery =
   "SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`phone_num` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 0 order by `cs`.`request_date` desc";
-export const getCSDonesQuery =
-  "SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`phone_num` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 1 order by `cs`.`request_date` desc";
 
+// GET /delivery/cs/done -> 오배송 처리완료 리스트 (배송완료날짜 기준 최신순 정렬)
+export const getCSDonesQuery =
+  "SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`phone_num`, `delivery`.`delivered_date` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 1 order by `delivery`.`delivered_date` desc";
+// cs접수날짜 기준 최신순 정렬하는 쿼리
+//"SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`phone_num` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 1 order by `cs`.`request_date` desc";
+
+// cs_id 기준 해당 cs접수건 completed=1 업데이트 (처리완료)
 const setCSItemCompleted = "UPDATE `cs` SET `completed` = 1 where `cs_id` = ?";
 
 // 채팅 이력 저장, 배송완료 일자 업데이트(배송상태 이미 3번이지만 또), cs 테이블 completed=1
@@ -77,15 +93,10 @@ export const kurlyveryLoginQuery =
   "UPDATE `kurlyvery` SET `device_token` = ? WHERE `id` = ?";
 
 // chattingController.js
+// GET /delivery/:trackingnum -> 운송장 기준 채팅내역 (오래된 날짜 우선)
 export const getChattingHistoryQuery =
   "SELECT `text`, `img_uri`, `time`, `is_first_msg` FROM `message` where `tracking_num` = ? order by `time` asc;";
 
-// 냅둬보기 일단
-export const getDeliveryToDoItemQuery =
-  "SELECT `delivery`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`user_request`, `user`.`phone_num` FROM `delivery` join `user` on `delivery`.`user_id` = `user`.`id` where `delivery`.`tracking_num` = ?";
-
-export const updateDeliveryToDoItemQuery = "";
-
-// cs 테이블에 운송장번호 없을 때 쿼리
+// cs 테이블에 운송장번호 없을 때 쿼리 (과거 쿼리. 지금은 안 씀)
 // export const setCSOrdernumItemQuery =
 //   "INSERT INTO `cs` (`order_num`,`img_uri`,`request_title`,`request_content`,`request_category`,`completed`) VALUES(?,?,?,?,?,?)";
