@@ -46,7 +46,7 @@ export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
   ];
   getConnectionPool(async (connection) => {
     try {
-      let [rows] = await connection.query(
+      await connection.query(
         updateDeliveryToDoItemToStatusTwoQuery,
         queryParams
       );
