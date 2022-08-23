@@ -35,7 +35,7 @@ export const getDeliveryDones = (req, res) => {
 
 export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
   // 채팅도 저장해야 되고 배송지연으로 처리도 해야함!!!!
-  const { text, img_uri, is_first_msg } = req.body;
+  const { text, img_uri, is_first_msg, order_num } = req.body;
   const queryParams = [
     req.params.trackingnum,
     text,
@@ -43,6 +43,7 @@ export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
     img_uri,
     is_first_msg,
     req.params.trackingnum,
+    order_num,
   ];
   getConnectionPool(async (connection) => {
     try {
@@ -62,7 +63,7 @@ export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
 
 export const updateDeliveryToDoItemToStatusThree = (req, res) => {
   // 채팅도 저장해야 되고 배송완료로 처리도 해야함!!!!
-  const { text, img_uri, is_first_msg } = req.body;
+  const { text, img_uri, is_first_msg, order_num } = req.body;
   const queryParams = [
     req.params.trackingnum,
     text,
@@ -71,6 +72,8 @@ export const updateDeliveryToDoItemToStatusThree = (req, res) => {
     is_first_msg,
     req.params.trackingnum,
     req.params.trackingnum,
+    order_num,
+    order_num,
   ];
   getConnectionPool(async (connection) => {
     try {

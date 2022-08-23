@@ -1,5 +1,9 @@
 import { getConnectionPool } from "../database/db";
-import { getCSDonesQuery, getCSToDosQuery } from "../database/query";
+import {
+  getCSDonesQuery,
+  getCSToDosQuery,
+  updateCSTodoItemToStatusThreeQuery,
+} from "../database/query";
 
 export const getCSToDos = (req, res) => {
   getConnectionPool(async (connection) => {
@@ -28,6 +32,26 @@ export const getCSDones = (req, res) => {
   });
 };
 
-export const updateCSTodoItem = (req, res) => {
-  return res.send(`${req.params.trackingnum}을 재배송완료했다고 처리합니다`);
+export const updateCSTodoItemToStatusThree = (req, res) => {
+  const { text, img_uri, is_first_msg, cs_id } = req.body;
+  const queryParams = [
+    text,
+    req.params.trackingnum,
+    img_uri,
+    is_first_msg,
+    req.params.trackingnum,
+    req.params.trackingnum,
+    cs_id,
+  ];
+  getConnectionPool(async (connection) => {
+    try {
+      await connection.query(updateCSTodoItemToStatusThreeQuery, queryParams);
+      connection.release();
+      return res.send("DB update success");
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
 };
