@@ -61,6 +61,10 @@ export const userLoginQuery =
 export const kurlyveryLoginQuery =
   "UPDATE `kurlyvery` SET `device_token` = ? WHERE `id` = ?";
 
+// chattingController.js
+export const getChattingHistoryQuery =
+  "SELECT `text`, `img_uri`, `time`, `is_first_msg` FROM `message` where `tracking_num` = ? order by `time` asc;";
+
 // 냅둬보기 일단
 export const getDeliveryToDoItemQuery =
   "SELECT `delivery`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`user_request`, `user`.`phone_num` FROM `delivery` join `user` on `delivery`.`user_id` = `user`.`id` where `delivery`.`tracking_num` = ?";

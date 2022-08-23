@@ -111,7 +111,7 @@
   "request_content": "이제는 운송장이 떠야함요",
   "request_category": "상품이 다른곳으로 갔어요",
   "completed": 0,
-  "id": 70,
+  "cs_id": 70,
   "request_date": "2022-08-23T04:47:34.000Z",
   "tracking_num": "220-W0-227233424-0002"
   }
@@ -125,3 +125,4 @@
 (body에 text, img_uri, is_first_msg, cs_id, order_num 넣어서 보내주세요. 만약 img/text 비어있으면 빈 문자열로)
 
 - GET /delivery/:trackingnum -> 운송장 기준 채팅내역
+  (운송장 기반 text, img_uri, is_first_msg, 고객이름, 기사이름, time 넘겨주기 order by `time` asc)
