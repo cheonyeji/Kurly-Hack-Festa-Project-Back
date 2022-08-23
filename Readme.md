@@ -2,10 +2,10 @@
 
 ### 로그인
 
-[]- POST /user/login -> User Login (유저)
+[V]- POST /user/login -> User Login (유저) (id : testuser01 고정)
 (body에 device_token 값 넣어서 보내주세요)
 
-[]- POST /delivery/login -> Kurlyvery Login (기사)
+[V]- POST /delivery/login -> Kurlyvery Login (기사) (id : testvery01 고정)
 (body에 device_token 값 넣어서 보내주세요)
 
 ## User (Kurly)

@@ -87,8 +87,11 @@ export const updateCSTodoItemToStatusThreeQuery =
   saveChatting + updateToStatusThree + setCSItemCompleted;
 
 // loginController
+// POST /user/login -> User Login (유저) (id : testuser01 고정)
 export const userLoginQuery =
   "UPDATE `user` SET `device_token` = ? WHERE `id` = ?";
+
+// POST /delivery/login -> Kurlyvery Login (기사) (id : testvery01 고정)
 export const kurlyveryLoginQuery =
   "UPDATE `kurlyvery` SET `device_token` = ? WHERE `id` = ?";
 
