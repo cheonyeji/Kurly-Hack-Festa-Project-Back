@@ -2,8 +2,8 @@ import { getConnectionPool } from "../database/db";
 import { userLoginQuery, kurlyveryLoginQuery } from "../database/query";
 
 export const userLogin = (req, res) => {
-  const { id, device_token } = req.body;
-  const queryParams = [device_token, id];
+  const { device_token } = req.body;
+  const queryParams = [device_token, "testuser01"];
   getConnectionPool(async (connection) => {
     try {
       await connection.query(userLoginQuery, queryParams);
@@ -17,8 +17,8 @@ export const userLogin = (req, res) => {
   });
 };
 export const kurlyveryLogin = (req, res) => {
-  const { id, device_token } = req.body;
-  const queryParams = [device_token, id];
+  const { device_token } = req.body;
+  const queryParams = [device_token, "testvery01"];
   getConnectionPool(async (connection) => {
     try {
       await connection.query(kurlyveryLoginQuery, queryParams);
