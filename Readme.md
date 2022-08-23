@@ -20,6 +20,11 @@
 2 배송지연
 3 배송완료
 
+[ temperature ]
+room 상온
+refrigerating 냉장
+freezing 냉동
+
 ### 주문 내역 관련 (user, 기존 마켓컬리 앱)
 
 [V]- GET /user/order -> 주문 리스트 --> res.send (주문일자, 주문번호, 주문상품, 결제방법 결제금액, 주문상태, 주문유저id object 배열 )
@@ -55,12 +60,12 @@
 
 ### 채팅 관련
 
-- 배송완료 버튼 클릭 시 기사 채팅 내역, 기사 보낸 사진 보내줘야 함
-  - GET /user/order/:ordernum/0 -> 해당주문번호 상온 운송장 채팅이력
-  - GET /user/order/:ordernum/1 -> 해당주문번호 냉장 운송장 채팅이력
-  - GET /user/order/:ordernum/2 -> 해당주문번호 냉동 운송장 채팅이력
-    (냉동/냉장/상온 중 어떤 요소가 클릭되었는지 알아야... 채팅 내역을 부를 수 있음)
-    (채팅 내역 보내줄 때 오래된 날짜 순으로)
+[V]- 배송완료 버튼 클릭 시 기사 채팅 내역, 기사 보낸 사진 보내줘야 함
+
+- GET /user/order/:ordernum/0 -> 해당주문번호 상온 운송장 배송완료 메시지
+- GET /user/order/:ordernum/1 -> 해당주문번호 냉장 운송장 배송완료 메시지
+- GET /user/order/:ordernum/2 -> 해당주문번호 냉동 운송장 배송완료 메시지
+  (냉동/냉장/상온 중 어떤 요소가 클릭되었는지 알아야... 채팅 내역을 부를 수 있음)
 
 ## Delivery (KurlyVery)
 

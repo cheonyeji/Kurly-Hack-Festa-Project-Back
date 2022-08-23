@@ -1,12 +1,21 @@
 //////// userController
+
+// GET /user/order -> 주문 리스트
 export const getOrderItemsQuery =
   "SELECT * FROM `order` order by `order_date` desc";
 
+// GET /user/order/:ordernum -> 특정 주문 상세
 export const getOrdernumItemQuery =
   "SELECT `temperature`, `tracking_num`, `delivered_date`, `tracking_status` FROM `delivery` WHERE `order_num` =?";
 
+// POST /user/order/:ordernum -> 특정 주문 cs 접수
 export const setCSOrdernumItemQuery =
   "INSERT INTO `cs` (`order_num`,`img_uri`,`request_title`,`request_content`,`request_category`,`completed`, `tracking_num`) values (?, ?, ?, ?, ?, ?, (select `tracking_num` from `delivery` where `delivery`.`temperature` = ? and `delivery`.`order_num` = ?))";
+
+// GET /user/order/:ordernum/0~2 -> 해당주문번호 상온~냉장 운송장 배송완료 메시지
+// 배송완료 메시지는 무조건 사진+text로 저장되어 가장 최신순 하나만 select
+export const getChattingHistoryByTempQuery =
+  "select `text`, `img_uri` from `message` where `tracking_num` = (select `tracking_num` from `delivery` where `order_num`=? and `temperature` = ?) order by `time` desc limit 1";
 
 //////// msgController
 export const getDeliveryToDosQuery =

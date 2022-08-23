@@ -1,5 +1,6 @@
-import { getConnectionPool, pool } from "../database/db";
+import { getConnectionPool } from "../database/db";
 import {
+  getChattingHistoryByTempQuery,
   getOrderItemsQuery,
   getOrdernumItemQuery,
   setCSOrdernumItemQuery,
@@ -63,31 +64,57 @@ export const setCSOrdernumItem = (req, res) => {
   });
 };
 
-// export const setCSOrdernumItem = async (req, res) => {
-//   const { img_uri, title, content, category } = req.body;
-//   const queryParams = [
-//     req.params.ordernum,
-//     img_uri,
-//     title,
-//     content,
-//     category,
-//     0,
-//   ];
+export const getChattingHistoryTempIsRoom = (req, res) => {
+  const queryParams = [req.params.ordernum, "room"];
 
-//   try {
-//     const connection = await pool.getConnection(async (conn) => conn);
-//     try {
-//       await connection.query(setCSOrdernumItemQuery, queryParams);
-//       connection.release();
-//       console.log("Success");
-//       return res.send("DB insert success");
-//     } catch (err) {
-//       console.log("Query Error", err);
-//       connection.release();
-//       return res.send(err);
-//     }
-//   } catch (err) {
-//     console.log("DB error");
-//     return res.send(err);
-//   }
-// };
+  getConnectionPool(async (connection) => {
+    try {
+      let [rows] = await connection.query(
+        getChattingHistoryByTempQuery,
+        queryParams
+      );
+      connection.release();
+      return res.send(rows);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
+};
+
+export const getChattingHistoryTempIsRefrig = (req, res) => {
+  const queryParams = [req.params.ordernum, "refrigerating"];
+  getConnectionPool(async (connection) => {
+    try {
+      let [rows] = await connection.query(
+        getChattingHistoryByTempQuery,
+        queryParams
+      );
+      connection.release();
+      return res.send(rows);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
+};
+
+export const getChattingHistoryTempIsFreez = (req, res) => {
+  const queryParams = [req.params.ordernum, "freezing"];
+  getConnectionPool(async (connection) => {
+    try {
+      let [rows] = await connection.query(
+        getChattingHistoryByTempQuery,
+        queryParams
+      );
+      connection.release();
+      return res.send(rows);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
+};
