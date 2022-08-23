@@ -1,9 +1,9 @@
-import { getConnectionPool, pool } from "../dababase/db";
+import { getConnectionPool, pool } from "../database/db";
 import {
   getOrderItemsQuery,
   getOrdernumItemQuery,
   setCSOrdernumItemQuery,
-} from "../dababase/query";
+} from "../database/query";
 
 export const getOrderItems = (req, res) => {
   getConnectionPool(async (connection) => {
@@ -37,7 +37,7 @@ export const getOrdernumItem = (req, res) => {
 };
 
 export const setCSOrdernumItem = (req, res) => {
-  const { img_uri, title, content, category } = req.body;
+  const { img_uri, title, content, category, temperature } = req.body;
   const queryParams = [
     req.params.ordernum,
     img_uri,
@@ -45,6 +45,8 @@ export const setCSOrdernumItem = (req, res) => {
     content,
     category,
     0,
+    temperature,
+    req.params.ordernum,
   ];
 
   getConnectionPool(async (connection) => {
