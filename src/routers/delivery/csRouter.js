@@ -1,7 +1,6 @@
 import express from "express";
 import {
   getCSDones,
-  getCSTodoItem,
   getCSToDos,
   updateCSTodoItem,
 } from "../../controllers/csController";
@@ -10,7 +9,7 @@ const csRouter = express.Router();
 
 csRouter.get("/todo", getCSToDos);
 
-csRouter.route("/todo/:trackingnum").get(getCSTodoItem).post(updateCSTodoItem);
+csRouter.post("/todo/:trackingnum", updateCSTodoItem);
 
 csRouter.get("/done", getCSDones);
 
