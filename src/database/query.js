@@ -10,10 +10,10 @@ export const setCSOrdernumItemQuery =
 
 //////// msgController
 export const getDeliveryToDosQuery =
-  "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `receiver_phone`, `order_num` FROM `delivery` where `delivered_date` is null";
+  "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` where `delivered_date` is null";
 
 export const getDeliveryDonesQuery =
-  "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`receiver_phone`, `delivered_date`, `order_num` FROM `delivery` where `delivered_date` is not null";
+  "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`phone_num`, `delivered_date`, `order_num` FROM `delivery` where `delivered_date` is not null";
 
 const insertIfNotExits =
   "INSERT IGNORE INTO `header` (`tracking_num`, `from_id`, `to_id`) select `tracking_num`, `kurlyvery_id`, `user_id` from `kurylyDB`.`delivery` where `tracking_num` = ? ; ";
@@ -45,9 +45,9 @@ export const updateDeliveryToDoItemToStatusThreeQuery =
 
 //////// csController
 export const getCSToDosQuery =
-  "SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`receiver_phone` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 0 order by `cs`.`request_date` desc";
+  "SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`phone_num` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 0 order by `cs`.`request_date` desc";
 export const getCSDonesQuery =
-  "SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`receiver_phone` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 1 order by `cs`.`request_date` desc";
+  "SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`phone_num` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 1 order by `cs`.`request_date` desc";
 
 const setCSItemCompleted = "UPDATE `cs` SET `completed` = 1 where `cs_id` = ?";
 
