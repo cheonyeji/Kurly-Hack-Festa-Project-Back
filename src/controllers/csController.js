@@ -1,12 +1,31 @@
+import { getConnectionPool } from "../database/db";
+import { getCSDonesQuery, getCSToDosQuery } from "../database/query";
+
 export const getCSToDos = (req, res) => {
-  return res.send("cs 할일이 많아요~");
+  getConnectionPool(async (connection) => {
+    try {
+      let [rows] = await connection.query(getCSToDosQuery);
+      connection.release();
+      return res.send(rows);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
 };
 export const getCSDones = (req, res) => {
-  return res.send("cs 완료된 일을 늘려요~");
-};
-
-export const getCSTodoItem = (req, res) => {
-  return res.send(`${req.params.trackingnum}을 조회합니다`);
+  getConnectionPool(async (connection) => {
+    try {
+      let [rows] = await connection.query(getCSDonesQuery);
+      connection.release();
+      return res.send(rows);
+    } catch (err) {
+      console.log("Query Error", err);
+      connection.release();
+      return res.send(err);
+    }
+  });
 };
 
 export const updateCSTodoItem = (req, res) => {
