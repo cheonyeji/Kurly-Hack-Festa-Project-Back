@@ -11,9 +11,15 @@ export const setCSOrdernumItemQuery =
 //////// msgController
 export const getDeliveryToDosQuery =
   "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` where `delivered_date` is null";
+// 주문일자 기준 정렬한 결과 (오래된 일자 먼저)
+// "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `delivery`.`order_num`, `order`.`order_date` FROM `delivery` join `order` on `delivery`.`order_num` = `order`.`order_num` where `delivered_date` is null order by  `order`.`order_date` asc";
+// 주문일자 기준 정렬하기 전 (따로 정렬X)
+// "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` join `order` on `delivery`.`order_num` = `order`.`order_num` where `delivered_date` is null order by  `order`.`order_date` asc";
 
 export const getDeliveryDonesQuery =
-  "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`phone_num`, `delivered_date`, `order_num` FROM `delivery` where `delivered_date` is not null";
+  "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`phone_num`, `delivered_date`, `order_num` FROM `delivery` where `delivered_date` is not null order by `delivered_date` desc";
+// 주문번호 기준 정렬한 결과 (오래된 일자 먼저)
+// "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`phone_num`, `delivered_date`, `delivery`.`order_num`, `order`.`order_date`FROM `delivery` where `delivered_date` is not null";
 
 const insertIfNotExits =
   "INSERT IGNORE INTO `header` (`tracking_num`, `from_id`, `to_id`) select `tracking_num`, `kurlyvery_id`, `user_id` from `kurylyDB`.`delivery` where `tracking_num` = ? ; ";
