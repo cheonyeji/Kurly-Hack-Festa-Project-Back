@@ -37,10 +37,11 @@ export const getOrdernumItem = (req, res) => {
 };
 
 export const setCSOrdernumItem = (req, res) => {
-  const { img_uri, title, content, category, temperature } = req.body;
+  const { title, content, category, temperature } = req.body;
+
   const queryParams = [
     req.params.ordernum,
-    img_uri,
+    req.file === undefined ? "" : req.file.location,
     title,
     content,
     category,

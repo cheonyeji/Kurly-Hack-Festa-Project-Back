@@ -49,7 +49,8 @@
 (temperature 값은 room / refrigerating / freezing. 상온/ 냉장/ 냉동)
 
 [V]- POST /user/order/:ordernum -> 특정 주문 cs 접수
-(body에 json형식으로 img_uri, title, content, category, temperature 넘겨주세요)
+(form-data 형식으로 img_uri title, content, category, temperature 넘겨주세요)
+
 (8/23 냉장/냉동/상온 중 어느 요소가 체크된건지 temperature 추가 )
 
 ### 채팅 관련
@@ -71,10 +72,10 @@
   [
   {
   "tracking_num": "220-W0-227233424-0002",
-  "receiver": "서수민",
+  "receiver": "서맹구",
   "address": "서울 강서구 아파트 2110호",
   "user_request": "초인종을 눌러주세요",
-  "phone_num": "010-9246-8253",
+  "phone_num": "010-9999-9999",
   "order_num": "343432321"
   }, {...}
   ]
@@ -86,10 +87,10 @@
   [
   {
   "tracking_num": "220-W0-227233424-03",
-  "receiver": "서수민",
+  "receiver": "서맹구",
   "address": "서울 강서구 아파트 2110호",
   "user_request": "초인종을 눌러주세요",
-  "phone_num": "010-9246-8253",
+  "phone_num": "010-9999-9999",
   "delivered_date": "2022-08-21T19:20:00.000Z",
   "order_num": "343432321"
   }
@@ -97,10 +98,29 @@
 
 [v]- POST /delivery/msg/todo/2/:trackingnum -> 송장번호 메시지 전송 - (미배송->배송지연)
 [v]- POST /delivery/msg/todo/3/:trackingnum -> 송장번호 메시지 전송 - (미배송->배송완료)
-(body에 text, img_uri, is_first_msg, order_num 넣어서 보내주세요. 만약 img/text 비어있으면 빈 문자열로)
+(form-data형식으로 text, img_uri, is_first_msg, order_num 넣어서 보내주세요.)
 (\* 배송완료로 바뀌면서 기사가 보낸 채팅 이력 중 가장 마지막 시간 기준으로 배송완료일자 update됨)
 
 [v]- GET /delivery/cs/todo -> 오배송 리스트
+
+- 예시
+  [
+  {
+  "order_num": "343432321",
+  "img_uri": null,
+  "request_title": "Test",
+  "request_content": "Sssssdedsdd",
+  "request_category": "배송 상품이 안 왔어요",
+  "cs_id": 71,
+  "request_date": "2022-08-23T09:36:02.000Z",
+  "tracking_num": "220-W0-227233424-0002",
+  "receiver": "서맹구",
+  "address": "서울 강서구 아파트 2110호",
+  "phone_num": "010-9999-9999"
+  }
+  ]
+
+[v]- GET /delivery/cs/done -> 오배송 처리완료 리스트
 
 - 예시
   [
@@ -110,19 +130,26 @@
   "request_title": "상품이 안보여요",
   "request_content": "이제는 운송장이 떠야함요",
   "request_category": "상품이 다른곳으로 갔어요",
-  "completed": 0,
   "cs_id": 70,
   "request_date": "2022-08-23T04:47:34.000Z",
-  "tracking_num": "220-W0-227233424-0002"
+  "tracking_num": "220-W0-227233424-0002",
+  "receiver": "서맹구",
+  "address": "서울 강서구 아파트 2110호",
+  "receiver_phone": "010-9999-8253"
   }
   ]
 
-[v]- GET /delivery/cs/done -> 오배송 처리완료 리스트
-
-- 예시 : GET /delivery/cs/todo 와 동일
-
 [v]- POST /delivery/cs/todo/:trackingnum -> 송장번호 메시지 전송 (오배송->배송완료)
-(body에 text, img_uri, is_first_msg, cs_id, order_num 넣어서 보내주세요. 만약 img/text 비어있으면 빈 문자열로)
+(form-data형식으로 text, img_uri, is_first_msg, cs_id, order_num 넣어서 보내주세요)
 
-- GET /delivery/:trackingnum -> 운송장 기준 채팅내역
-  (운송장 기반 text, img_uri, is_first_msg, 고객이름, 기사이름, time 넘겨주기 order by `time` asc)
+[]- GET /delivery/:trackingnum -> 운송장 기준 채팅내역
+(고객이름, 배송기사 이름 추가로 넘겨줘야함!!!)
+(운송장 기반 text, img_uri, is_first_msg, time 넘어와요 오래된 날짜 정렬입니다)
+[
+{
+"text": "고객님 발송이 지연되고 있어 죄송합니다",
+"img_uri": null,
+"time": "2022-08-23T06:43:36.000Z",
+"is_first_msg": 1
+}, { ... }
+]

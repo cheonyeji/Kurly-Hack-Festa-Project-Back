@@ -33,11 +33,11 @@ export const getCSDones = (req, res) => {
 };
 
 export const updateCSTodoItemToStatusThree = (req, res) => {
-  const { text, img_uri, is_first_msg, cs_id } = req.body;
+  const { text, is_first_msg, cs_id } = req.body;
   const queryParams = [
     text,
     req.params.trackingnum,
-    img_uri,
+    req.file === undefined ? "" : req.file.location,
     is_first_msg,
     req.params.trackingnum,
     req.params.trackingnum,

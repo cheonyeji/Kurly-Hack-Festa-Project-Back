@@ -35,12 +35,12 @@ export const getDeliveryDones = (req, res) => {
 
 export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
   // 채팅도 저장해야 되고 배송지연으로 처리도 해야함!!!!
-  const { text, img_uri, is_first_msg, order_num } = req.body;
+  const { text, is_first_msg, order_num } = req.body;
   const queryParams = [
     req.params.trackingnum,
     text,
     req.params.trackingnum,
-    img_uri,
+    req.file === undefined ? "" : req.file.location,
     is_first_msg,
     req.params.trackingnum,
     order_num,
@@ -63,12 +63,12 @@ export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
 
 export const updateDeliveryToDoItemToStatusThree = (req, res) => {
   // 채팅도 저장해야 되고 배송완료로 처리도 해야함!!!!
-  const { text, img_uri, is_first_msg, order_num } = req.body;
+  const { text, is_first_msg, order_num } = req.body;
   const queryParams = [
     req.params.trackingnum,
     text,
     req.params.trackingnum,
-    img_uri,
+    req.file === undefined ? "" : req.file.location,
     is_first_msg,
     req.params.trackingnum,
     req.params.trackingnum,
