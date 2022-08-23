@@ -13,15 +13,16 @@ export const setCSOrdernumItemQuery =
 
 //////// msgController
 export const getDeliveryToDosQuery =
-  "SELECT `delivery`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`user_request`, `user`.`phone_num`, `delivery`.`order_num` FROM `delivery` join `user` on `delivery`.`user_id` = `user`.`id`";
+  "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `receiver_phone`, `order_num` FROM `delivery` where `delivered_date` is null";
 
 export const getDeliveryDonesQuery =
-  "SELECT `delivery`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`user_request`, `user`.`phone_num`, `delivery`.`delivered_date`, `delivery`.`order_num` FROM `delivery` join `user` on `delivery`.`user_id` =  `user`.`id` where `delivery`.`delivered_date` is not null";
+  "SELECT `tracking_num`, `receiver`, `address`, `user_request`,`receiver_phone`, `delivered_date`, `order_num` FROM `delivery` where `delivered_date` is not null";
 
 const insertIfNotExits =
   "INSERT IGNORE INTO `header` (`tracking_num`, `from_id`, `to_id`) select `tracking_num`, `kurlyvery_id`, `user_id` from `kurylyDB`.`delivery` where `tracking_num` = ? ; ";
 const saveChatting =
   "INSERT INTO `message` (`text`,`tracking_num`,`img_uri`,`is_first_msg`) VALUES (?,?,?,?); ";
+
 const updateToStatusTwo =
   "UPDATE `delivery` SET `tracking_status` = 2 WHERE `tracking_num` = ?; ";
 // 해당 운송장 메시지 마지막 발송 날짜 기준으로 배송완료 시간 저장 (최초 날짜로 하면 배송지연 메세지랑 구분이 안됨)
