@@ -73,7 +73,7 @@ export const setCSOrdernumItem = (req, res) => {
         .messaging()
         .send(message)
         .then(function (response) {
-          console.log("Successfully sent push noti", response);
+          // console.log("Successfully sent push noti", response);
           // return res.status(200).json({ success: true });
         })
         .catch(function (err) {

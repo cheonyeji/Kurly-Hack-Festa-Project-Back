@@ -71,7 +71,7 @@ export const updateCSTodoItemToStatusThree = (req, res) => {
         .messaging()
         .send(message)
         .then(function (response) {
-          console.log("Successfully sent push noti");
+          // console.log("Successfully sent push noti");
           // return res.status(200).json({ success: true });
         })
         .catch(function (err) {
