@@ -4,6 +4,7 @@ import {
   getCSToDosQuery,
   updateCSTodoItemToStatusThreeAndReturnTokenQuery,
 } from "../database/query";
+import { convertTemp } from "../pushNoti/msgFn";
 const admin = require("firebase-admin");
 
 export const getCSToDos = (req, res) => {
@@ -43,6 +44,7 @@ export const updateCSTodoItemToStatusThree = (req, res) => {
     req.params.trackingnum,
     req.params.trackingnum,
     cs_id,
+    req.params.trackingnum,
   ];
   getConnectionPool(async (connection) => {
     try {
@@ -52,15 +54,15 @@ export const updateCSTodoItemToStatusThree = (req, res) => {
       );
       connection.release();
 
-      console.log(rows);
-      console.log(rows[3][0]);
-
+      const { order_product, temperature } = rows[4][0];
       const user_token = rows[3][0].device_token;
 
       let message = {
         notification: {
           title: "상품의 재배송이 완료되었습니다",
-          body: `운송장 ${req.params.trackingnum} 상품을 다시 배송하였습니다.`,
+          body: `${order_product}의 ${convertTemp(
+            temperature
+          )} 상품을 다시 배송하였습니다. 기다려주셔서 감사합니다.`,
         },
         token: user_token,
       };

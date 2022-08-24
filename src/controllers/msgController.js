@@ -5,6 +5,7 @@ import {
   updateDeliveryToDoItemToStatusThreeAndRetrunTokenQuery,
   updateDeliveryToDoItemToStatusTwoAndRetrunTokenQuery,
 } from "../database/query";
+import { convertTemp } from "../pushNoti/msgFn";
 const admin = require("firebase-admin");
 
 export const getDeliveryToDos = (req, res) => {
@@ -45,6 +46,7 @@ export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
     is_first_msg,
     req.params.trackingnum,
     order_num,
+    req.params.trackingnum,
   ];
   getConnectionPool(async (connection) => {
     try {
@@ -54,10 +56,15 @@ export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
       );
       connection.release();
       const user_token = rows[4][0].device_token;
+
+      const { order_product, temperature } = rows[5][0];
+
       let message = {
         notification: {
           title: "상품의 배송이 지연되고 있습니다",
-          body: `운송장 ${req.params.trackingnum} 상품을 최대한 빠르게 배송 완료하도록 노력하겠습니다.`,
+          body: `${order_product}의 ${convertTemp(
+            temperature
+          )} 상품을 최대한 빠르게 배송 완료하도록 노력하겠습니다.`,
         },
         token: user_token,
       };
@@ -95,6 +102,7 @@ export const updateDeliveryToDoItemToStatusThree = (req, res) => {
     req.params.trackingnum,
     order_num,
     order_num,
+    req.params.trackingnum,
   ];
   getConnectionPool(async (connection) => {
     try {
@@ -103,12 +111,17 @@ export const updateDeliveryToDoItemToStatusThree = (req, res) => {
         queryParams
       );
       connection.release();
+
+      const { order_product, temperature } = rows[5][0];
+
       const user_token = rows[4][0].device_token;
 
       let message = {
         notification: {
           title: "상품의 배송이 완료되었습니다",
-          body: `운송장 ${req.params.trackingnum} 상품을 배송 완료하였습니다.`,
+          body: `${order_product}의 ${convertTemp(
+            temperature
+          )} 상품을 배송 완료하였습니다.`,
         },
         token: user_token,
       };

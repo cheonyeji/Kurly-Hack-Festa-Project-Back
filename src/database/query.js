@@ -62,7 +62,10 @@ const updateOrderStatusToThree =
   "update `order` set `order_status`= IF((select count(`tracking_status`) from `delivery` where (`order_num` = ? and `tracking_status` != 3)) = 0, 3, `order_status`)  where `order_num` = ?; ";
 
 const returnUserToken =
-  "SELECT `device_token` FROM `user` where `id`='testuser01'";
+  "SELECT `device_token` FROM `user` where `id`='testuser01'; ";
+
+const returnOrderProdAndTemp =
+  "select `order`.`order_product`, `delivery`.`temperature` from `delivery` join `order` on `order`.`order_num` = `delivery`.`order_num` where `delivery`.`tracking_num` = ? ;";
 
 // POST /delivery/msg/todo/2/:trackingnum -> 송장번호 메시지 전송 (미배송->배송지연) & 푸쉬알림
 export const updateDeliveryToDoItemToStatusTwoAndRetrunTokenQuery =
@@ -70,7 +73,8 @@ export const updateDeliveryToDoItemToStatusTwoAndRetrunTokenQuery =
   saveChatting +
   updateToStatusTwo +
   updateOrderStatusToTwo +
-  returnUserToken;
+  returnUserToken +
+  returnOrderProdAndTemp;
 
 // POST /delivery/msg/todo/3/:trackingnum -> 송장번호 메시지 전송 (미배송->배송완료) & 푸쉬알림
 export const updateDeliveryToDoItemToStatusThreeAndRetrunTokenQuery =
@@ -78,7 +82,8 @@ export const updateDeliveryToDoItemToStatusThreeAndRetrunTokenQuery =
   saveChatting +
   updateToStatusThree +
   updateOrderStatusToThree +
-  returnUserToken;
+  returnUserToken +
+  returnOrderProdAndTemp;
 
 //////// csController
 
@@ -97,9 +102,13 @@ const setCSItemCompleted =
   "UPDATE `cs` SET `completed` = 1 where `cs_id` = ?; ";
 
 // POST /delivery/cs/todo/:trackingnum -> 송장번호 메시지 전송 & 푸쉬알림
-// 채팅 이력 저장, 배송완료 일자 업데이트(배송상태 이미 3번이지만 또), cs 테이블 completed=1
+// 채팅 이력 저장, 배송완료 일자 업데이트(배송상태 이미 3번이지만 또), cs 테이블 completed=1, 상품명&냉장냉동상온 리턴
 export const updateCSTodoItemToStatusThreeAndReturnTokenQuery =
-  saveChatting + updateToStatusThree + setCSItemCompleted + returnUserToken;
+  saveChatting +
+  updateToStatusThree +
+  setCSItemCompleted +
+  returnUserToken +
+  returnOrderProdAndTemp;
 
 //////// loginController
 // POST /user/login -> User Login (유저) (id : testuser01 고정)
