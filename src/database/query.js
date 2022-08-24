@@ -24,11 +24,12 @@ export const getChattingHistoryByTempQuery =
 //////// msgController
 // GET /delivery/msg/todo -> 미배송 리스트
 export const getDeliveryToDosQuery =
-  "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` where `delivered_date` is null";
-// 주문일자 기준 정렬한 결과 (오래된 일자 먼저)
-// "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `delivery`.`order_num`, `order`.`order_date` FROM `delivery` join `order` on `delivery`.`order_num` = `order`.`order_num` where `delivered_date` is null order by  `order`.`order_date` asc";
-// 주문일자 기준 정렬하기 전 (따로 정렬X)
-// "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` join `order` on `delivery`.`order_num` = `order`.`order_num` where `delivered_date` is null order by  `order`.`order_date` asc";
+  // 따로 정렬 X
+  //"SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `order_num` FROM `delivery` where `delivered_date` is null";
+  // 주문일자 기준 정렬한 결과 (오래된 일자 먼저)
+  // "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `delivery`.`order_num`, `order`.`order_date` FROM `delivery` join `order` on `delivery`.`order_num` = `order`.`order_num` where `delivered_date` is null order by  `order`.`order_date` asc";
+  // 주문일자는 출력하지 않으며 정렬은 함
+  "SELECT `tracking_num`, `receiver`, `address`, `user_request`, `phone_num`, `delivery`.`order_num` FROM `delivery` join `order` on `delivery`.`order_num` = `order`.`order_num` where `delivered_date` is null order by  `order`.`order_date` asc";
 
 // GET /delivery/msg/done -> 배송완료 리스트 (배송날짜 기준 최신순)
 export const getDeliveryDonesQuery =
@@ -100,7 +101,7 @@ const setCSItemCompleted =
 export const updateCSTodoItemToStatusThreeAndReturnTokenQuery =
   saveChatting + updateToStatusThree + setCSItemCompleted + returnUserToken;
 
-// loginController
+//////// loginController
 // POST /user/login -> User Login (유저) (id : testuser01 고정)
 export const userLoginQuery =
   "UPDATE `user` SET `device_token` = ? WHERE `id` = ?";
@@ -113,7 +114,3 @@ export const kurlyveryLoginQuery =
 // GET /delivery/:trackingnum -> 운송장 기준 채팅내역 (오래된 날짜 우선)
 export const getChattingHistoryQuery =
   "SELECT `text`, `img_uri`, `time`, `is_first_msg` FROM `message` where `tracking_num` = ? order by `time` asc;";
-
-// cs 테이블에 운송장번호 없을 때 쿼리 (과거 쿼리. 지금은 안 씀)
-// export const setCSOrdernumItemQuery =
-//   "INSERT INTO `cs` (`order_num`,`img_uri`,`request_title`,`request_content`,`request_category`,`completed`) VALUES(?,?,?,?,?,?)";
