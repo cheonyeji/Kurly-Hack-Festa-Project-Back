@@ -2,9 +2,10 @@ import { getConnectionPool } from "../database/db";
 import {
   getDeliveryDonesQuery,
   getDeliveryToDosQuery,
-  updateDeliveryToDoItemToStatusThreeQuery,
-  updateDeliveryToDoItemToStatusTwoQuery,
+  updateDeliveryToDoItemToStatusThreeAndRetrunTokenQuery,
+  updateDeliveryToDoItemToStatusTwoAndRetrunTokenQuery,
 } from "../database/query";
+const admin = require("firebase-admin");
 
 export const getDeliveryToDos = (req, res) => {
   getConnectionPool(async (connection) => {
@@ -47,12 +48,32 @@ export const updateDeliveryToDoItemToStatusTwo = (req, res) => {
   ];
   getConnectionPool(async (connection) => {
     try {
-      await connection.query(
-        updateDeliveryToDoItemToStatusTwoQuery,
+      let [rows] = await connection.query(
+        updateDeliveryToDoItemToStatusTwoAndRetrunTokenQuery,
         queryParams
       );
       connection.release();
-      return res.send("DB update success");
+      const user_token = rows[4][0].device_token;
+      let message = {
+        notification: {
+          title: "상품의 배송이 지연되고 있습니다",
+          body: `운송장 ${req.params.trackingnum} 상품을 최대한 빠르게 배송 완료하도록 노력하겠습니다.`,
+        },
+        token: user_token,
+      };
+
+      admin
+        .messaging()
+        .send(message)
+        .then(function (response) {
+          console.log("Successfully sent push noti");
+          // return res.status(200).json({ success: true });
+        })
+        .catch(function (err) {
+          console.log("Error Sending message: ", err);
+          // return res.status(400).json({ success: false });
+        });
+      return res.send("DB update success and pushNoti success");
     } catch (err) {
       console.log("Query Error", err);
       connection.release();
@@ -77,12 +98,33 @@ export const updateDeliveryToDoItemToStatusThree = (req, res) => {
   ];
   getConnectionPool(async (connection) => {
     try {
-      await connection.query(
-        updateDeliveryToDoItemToStatusThreeQuery,
+      let [rows] = await connection.query(
+        updateDeliveryToDoItemToStatusThreeAndRetrunTokenQuery,
         queryParams
       );
       connection.release();
-      return res.send("DB update success");
+      const user_token = rows[4][0].device_token;
+
+      let message = {
+        notification: {
+          title: "상품의 배송이 완료되었습니다",
+          body: `운송장 ${req.params.trackingnum} 상품을 배송 완료하였습니다.`,
+        },
+        token: user_token,
+      };
+
+      admin
+        .messaging()
+        .send(message)
+        .then(function (response) {
+          console.log("Successfully sent push noti");
+          // return res.status(200).json({ success: true });
+        })
+        .catch(function (err) {
+          console.log("Error Sending message: ", err);
+          // return res.status(400).json({ success: false });
+        });
+      return res.send("DB update success and pushNoti success");
     } catch (err) {
       console.log("Query Error", err);
       connection.release();

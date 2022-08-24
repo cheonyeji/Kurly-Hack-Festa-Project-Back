@@ -4,6 +4,7 @@ import { userLoginQuery, kurlyveryLoginQuery } from "../database/query";
 export const userLogin = (req, res) => {
   const { device_token } = req.body;
   const queryParams = [device_token, "testuser01"];
+
   getConnectionPool(async (connection) => {
     try {
       await connection.query(userLoginQuery, queryParams);

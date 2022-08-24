@@ -8,9 +8,13 @@ export const getOrderItemsQuery =
 export const getOrdernumItemQuery =
   "SELECT `temperature`, `tracking_num`, `delivered_date`, `tracking_status` FROM `delivery` WHERE `order_num` =?";
 
-// POST /user/order/:ordernum -> 특정 주문 cs 접수
-export const setCSOrdernumItemQuery =
-  "INSERT INTO `cs` (`order_num`,`img_uri`,`request_title`,`request_content`,`request_category`,`completed`, `tracking_num`) values (?, ?, ?, ?, ?, ?, (select `tracking_num` from `delivery` where `delivery`.`temperature` = ? and `delivery`.`order_num` = ?))";
+// POST /user/order/:ordernum -> 특정 주문 cs 접수 & 푸쉬
+const registerCS =
+  "INSERT INTO `cs` (`order_num`,`img_uri`,`request_title`,`request_content`,`request_category`,`completed`, `tracking_num`) values (?, ?, ?, ?, ?, ?, (select `tracking_num` from `delivery` where `delivery`.`temperature` = ? and `delivery`.`order_num` = ?)); ";
+const returnKurlyveryToken =
+  "SELECT `device_token` FROM `kurlyvery` where `id`='testvery01'";
+export const setCSOrdernumItemAndReturnTokenQuery =
+  registerCS + returnKurlyveryToken;
 
 // GET /user/order/:ordernum/0~2 -> 해당주문번호 상온~냉장 운송장 배송완료 메시지
 // 배송완료 메시지는 무조건 사진+text로 저장되어 가장 최신순 하나만 select
@@ -54,18 +58,26 @@ const updateOrderStatusToTwo =
 
 // order table의 order_status -> 3 (배송완료) 업데이트
 const updateOrderStatusToThree =
-  "update `order` set `order_status`= IF((select count(`tracking_status`) from `delivery` where (`order_num` = ? and `tracking_status` != 3)) = 0, 3, `order_status`)  where `order_num` = ?";
+  "update `order` set `order_status`= IF((select count(`tracking_status`) from `delivery` where (`order_num` = ? and `tracking_status` != 3)) = 0, 3, `order_status`)  where `order_num` = ?; ";
 
-// POST /delivery/msg/todo/2/:trackingnum -> 송장번호 메시지 전송 (미배송->배송지연)
-export const updateDeliveryToDoItemToStatusTwoQuery =
-  insertIfNotExits + saveChatting + updateToStatusTwo + updateOrderStatusToTwo;
+const returnUserToken =
+  "SELECT `device_token` FROM `user` where `id`='testuser01'";
 
-// POST /delivery/msg/todo/3/:trackingnum -> 송장번호 메시지 전송 (미배송->배송완료)
-export const updateDeliveryToDoItemToStatusThreeQuery =
+// POST /delivery/msg/todo/2/:trackingnum -> 송장번호 메시지 전송 (미배송->배송지연) & 푸쉬알림
+export const updateDeliveryToDoItemToStatusTwoAndRetrunTokenQuery =
+  insertIfNotExits +
+  saveChatting +
+  updateToStatusTwo +
+  updateOrderStatusToTwo +
+  returnUserToken;
+
+// POST /delivery/msg/todo/3/:trackingnum -> 송장번호 메시지 전송 (미배송->배송완료) & 푸쉬알림
+export const updateDeliveryToDoItemToStatusThreeAndRetrunTokenQuery =
   insertIfNotExits +
   saveChatting +
   updateToStatusThree +
-  updateOrderStatusToThree;
+  updateOrderStatusToThree +
+  returnUserToken;
 
 //////// csController
 
@@ -80,11 +92,13 @@ export const getCSDonesQuery =
 //"SELECT `cs`.`order_num`, `cs`.`img_uri`, `cs`.`request_title`, `cs`.`request_content`, `cs`.`request_category`, `cs`.`cs_id`, `cs`.`request_date`, `cs`.`tracking_num`, `delivery`.`receiver`, `delivery`.`address`, `delivery`.`phone_num` FROM `cs` join `delivery` on `delivery`.`tracking_num` =  `cs`.`tracking_num` where `cs`.`completed` = 1 order by `cs`.`request_date` desc";
 
 // cs_id 기준 해당 cs접수건 completed=1 업데이트 (처리완료)
-const setCSItemCompleted = "UPDATE `cs` SET `completed` = 1 where `cs_id` = ?";
+const setCSItemCompleted =
+  "UPDATE `cs` SET `completed` = 1 where `cs_id` = ?; ";
 
+// POST /delivery/cs/todo/:trackingnum -> 송장번호 메시지 전송 & 푸쉬알림
 // 채팅 이력 저장, 배송완료 일자 업데이트(배송상태 이미 3번이지만 또), cs 테이블 completed=1
-export const updateCSTodoItemToStatusThreeQuery =
-  saveChatting + updateToStatusThree + setCSItemCompleted;
+export const updateCSTodoItemToStatusThreeAndReturnTokenQuery =
+  saveChatting + updateToStatusThree + setCSItemCompleted + returnUserToken;
 
 // loginController
 // POST /user/login -> User Login (유저) (id : testuser01 고정)

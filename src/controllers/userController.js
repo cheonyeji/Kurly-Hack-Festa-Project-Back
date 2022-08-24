@@ -3,8 +3,9 @@ import {
   getChattingHistoryByTempQuery,
   getOrderItemsQuery,
   getOrdernumItemQuery,
-  setCSOrdernumItemQuery,
+  setCSOrdernumItemAndReturnTokenQuery,
 } from "../database/query";
+const admin = require("firebase-admin");
 
 export const getOrderItems = (req, res) => {
   getConnectionPool(async (connection) => {
@@ -53,9 +54,34 @@ export const setCSOrdernumItem = (req, res) => {
 
   getConnectionPool(async (connection) => {
     try {
-      await connection.query(setCSOrdernumItemQuery, queryParams);
+      let [rows] = await connection.query(
+        setCSOrdernumItemAndReturnTokenQuery,
+        queryParams
+      );
       connection.release();
-      return res.send("DB insert success");
+      const kurlyvery_token = rows[1][0].device_token;
+
+      let message = {
+        notification: {
+          title: "새로운 CS가 접수되었습니다",
+          body: category,
+        },
+        token: kurlyvery_token,
+      };
+
+      admin
+        .messaging()
+        .send(message)
+        .then(function (response) {
+          console.log("Successfully sent push noti");
+          // return res.status(200).json({ success: true });
+        })
+        .catch(function (err) {
+          console.log("Error Sending message: ", err);
+          // return res.status(400).json({ success: false });
+        });
+
+      return res.send("DB insert success and pushNoti success");
     } catch (err) {
       console.log("Query Error", err);
       connection.release();

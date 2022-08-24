@@ -53,7 +53,7 @@ freezing 냉동
 (미배송인 경우 배송완료 날짜 값 null)
 (temperature 값은 room / refrigerating / freezing. 상온/ 냉장/ 냉동)
 
-[V]- POST /user/order/:ordernum -> 특정 주문 cs 접수
+[V]- POST /user/order/:ordernum -> 특정 주문 cs 접수 & 푸쉬
 (form-data 형식으로 img_uri title, content, category, temperature 넘겨주세요)
 
 (8/23 냉장/냉동/상온 중 어느 요소가 체크된건지 temperature 추가 )
@@ -111,8 +111,8 @@ freezing 냉동
   }
   ]
 
-[v]- POST /delivery/msg/todo/2/:trackingnum -> 송장번호 메시지 전송 - (미배송->배송지연)
-[v]- POST /delivery/msg/todo/3/:trackingnum -> 송장번호 메시지 전송 - (미배송->배송완료)
+[v]- POST /delivery/msg/todo/2/:trackingnum -> 송장번호 메시지 전송 - (미배송->배송지연) & 푸쉬알림
+[v]- POST /delivery/msg/todo/3/:trackingnum -> 송장번호 메시지 전송 - (미배송->배송완료) & 푸쉬알림
 (form-data형식으로 text, img_uri, is_first_msg, order_num 넣어서 보내주세요.)
 (\* 배송완료로 바뀌면서 기사가 보낸 채팅 이력 중 가장 마지막 시간 기준으로 배송완료일자 update됨)
 
@@ -154,7 +154,7 @@ freezing 냉동
   }
   ]
 
-[v]- POST /delivery/cs/todo/:trackingnum -> 송장번호 메시지 전송 (오배송->배송완료)
+[v]- POST /delivery/cs/todo/:trackingnum -> 송장번호 메시지 전송 (오배송->배송완료) & 푸쉬알림
 (form-data형식으로 text, img_uri, is_first_msg, cs_id, order_num 넣어서 보내주세요)
 
 [V]- GET /delivery/:trackingnum -> 운송장 기준 채팅내역 (오래된 날짜 우선)

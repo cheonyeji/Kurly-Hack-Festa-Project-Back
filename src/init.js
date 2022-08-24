@@ -1,4 +1,5 @@
 import "./database/db";
+import "./pushNoti/fcmSetting";
 import app from "./server";
 
 const PORT = 4000;
